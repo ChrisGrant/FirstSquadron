@@ -13,7 +13,6 @@
 -(id)init {
     if(self = [super initWithColor:[SKColor yellowColor] size:CGSizeMake(1, 3)]) {
         self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
-        self.physicsBody.mass = 1;
         self.physicsBody.friction = 0;
         self.physicsBody.usesPreciseCollisionDetection = YES;
     }

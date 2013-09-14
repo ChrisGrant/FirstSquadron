@@ -18,7 +18,7 @@
         self.physicsBody.categoryBitMask = enemyFighterCategory;
         self.physicsBody.collisionBitMask = heroFighterCategory | heroMissileCategory;
         self.physicsBody.contactTestBitMask = heroFighterCategory | heroMissileCategory;
-        self.physicsBody.mass = 2;
+        self.physicsBody.mass = 0.02;
         self.physicsBody.friction = 0;
         self.health = 1.0;
     }
@@ -26,14 +26,14 @@
 }
 
 -(double)missleFireRate {
-    return 0.9;
+    return 1.2;
 }
 
 -(void)fireMissle {
     EnemyMissile *missle = [EnemyMissile new];
     missle.position = CGPointMake(self.position.x, self.position.y - 30);
     [self.parent addChild:missle];
-    [missle.physicsBody applyImpulse:CGVectorMake(0, -500)];
+    [missle.physicsBody applyImpulse:CGVectorMake(0, -5)];
 }
 
 @end

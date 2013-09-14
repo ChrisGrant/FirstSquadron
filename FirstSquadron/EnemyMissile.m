@@ -16,6 +16,7 @@
         self.physicsBody.categoryBitMask = enemyMissleCategory;
         self.physicsBody.collisionBitMask = heroFighterCategory;
         self.physicsBody.contactTestBitMask = heroFighterCategory;
+        self.physicsBody.mass = 0.01;
     }
     return self;
 }

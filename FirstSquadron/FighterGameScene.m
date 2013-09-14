@@ -20,7 +20,7 @@
     CMAttitude *_referenceAttitude;
     SKNode *_fighterLayer;
     HeroFighter *_heroFighter;
-    int _score;
+    NSUInteger _score;
 }
 
 -(id)initWithSize:(CGSize)size {
@@ -47,13 +47,9 @@
             }];
         }
         
-        SKNode *groundLayer = [SKNode node];
-        [groundLayer setZPosition:-2];
-        [self addChild:groundLayer];
-        
         SKSpriteNode *ground = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:0.6 green:0.6 blue:1.0 alpha:1.0] size:size];
-        ground.position = groundLayer.position = CGPointMake((self.frame.size.width / 4), (self.frame.size.height / 4));
-        [groundLayer addChild:ground];
+        ground.position = CGPointMake((self.frame.size.width / 2), (self.frame.size.height / 2));
+        [self addChild:ground];
         
         _fighterLayer = [SKNode node];
         [self addChild:_fighterLayer];
@@ -61,7 +57,7 @@
         // Adds Clouds to the bottom of other view
         SKEmitterNode *emitter = [SKEmitterNode emitterNamed:@"CloudParticleEmitter"];
         emitter.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height + 200);
-        [groundLayer addChild:emitter];
+        [ground addChild:emitter];
         
         // Adds Clouds to the top of the view
         SKEmitterNode *emitter2 = [SKEmitterNode emitterNamed:@"CloudParticleEmitter"];
@@ -74,7 +70,7 @@
         heroBox.physicsBody.contactTestBitMask = heroFighterCategory;
         heroBox.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
         [_fighterLayer addChild:heroBox];
-
+        
         NSTimer *timer = [NSTimer timerWithTimeInterval:5.0 target:self selector:@selector(launchEnemyFighters) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     }
@@ -103,21 +99,18 @@
 
 -(void)didBeginContact:(SKPhysicsContact*)contact {
     // The hero plane has hit something
-    if(contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) {
-        if(contact.bodyA.categoryBitMask == enemyMissleCategory || contact.bodyB.categoryBitMask == enemyMissleCategory) {
-            SKNode *enemyMissle = contact.bodyA.categoryBitMask == enemyMissleCategory ? contact.bodyA.node : contact.bodyB.node;
-            [enemyMissle runAction:[SKAction removeFromParent]];
-            _heroFighter.health -= 0.05;
-            [self checkIfHeroIsStillAlive];
-            [self.interfaceDelegate updateHealth:_heroFighter.health];
-        }
+    if((contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) &&
+       (contact.bodyA.categoryBitMask == enemyMissleCategory || contact.bodyB.categoryBitMask == enemyMissleCategory)) {
+        SKNode *enemyMissle = contact.bodyA.categoryBitMask == enemyMissleCategory ? contact.bodyA.node : contact.bodyB.node;
+        [enemyMissle runAction:[SKAction removeFromParent]];
+        _heroFighter.health -= 0.05;
+        [self checkIfHeroIsStillAlive];
+        [self.interfaceDelegate updateHealth:_heroFighter.health];
     }
-    
     // An enemy plane has hit something
-    if(contact.bodyA.categoryBitMask == enemyFighterCategory || contact.bodyB.categoryBitMask == enemyFighterCategory) {
+    else if(contact.bodyA.categoryBitMask == enemyFighterCategory || contact.bodyB.categoryBitMask == enemyFighterCategory) {
         SKNode *enemyBody = contact.bodyA.categoryBitMask == enemyFighterCategory ? contact.bodyA.node : contact.bodyB.node;
         [enemyBody runAction:[SKAction sequence:@[[SKAction removeFromParent]]]];
-        CGPoint position = enemyBody.position;
         
         BOOL explode = NO;
         if(contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) {
@@ -134,16 +127,17 @@
         
         if(explode) {
             SKEmitterNode *emitter = [SKEmitterNode emitterNamed:@"Explosion"];
-            emitter.position = position;
+            emitter.position = enemyBody.position;
             emitter.particleAlpha = 0.5;
             [self addChild:emitter];
             [emitter runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:0.3], [SKAction removeFromParent]]]];
         }
     }
-    
     // Hero/Enemy missle has hit something - remove. If it had an effect on anything we should have done that above.
-    [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
-    [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
+    else {
+        [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
+        [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
+    }
 }
 
 -(void)checkContactAndRemoveBody:(SKPhysicsContact *)contact withCategory:(FighterGameCategories)bitmask {
@@ -184,7 +178,7 @@
     fighter.position = CGPointMake(xPos, yPos);
     [fighter runAction:[SKAction rotateByAngle:M_PI duration:0]];
     [_fighterLayer addChild:fighter];
-    [fighter.physicsBody applyImpulse:CGVectorMake(0, -400)];
+    [fighter.physicsBody applyImpulse:CGVectorMake(0, -4)];
 }
 
 @end

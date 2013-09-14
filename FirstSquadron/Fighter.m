@@ -27,7 +27,7 @@
         
         _smokeEmitter = [SKEmitterNode emitterNamed:@"DamageSmoke"];
         _smokeEmitter.position = CGPointMake(0, 30);
-        [_smokeEmitter setParticleAlpha:0.1];
+        [_smokeEmitter setParticleAlpha:0.0];
         [_smokeEmitter setParticleColor:[SKColor whiteColor]];
         [self addChild:_smokeEmitter];
         

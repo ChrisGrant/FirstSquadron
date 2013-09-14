@@ -13,7 +13,7 @@
 @implementation EnemyFighter
 
 -(id)init {
-    if(self = [super initWithSpriteImageName:@"spitfire"]) {
+    if(self = [super initWithSpriteImageName:@"enemy"]) {
         self.name = @"Enemy Fighter";
         self.physicsBody.categoryBitMask = enemyFighterCategory;
         self.physicsBody.collisionBitMask = heroFighterCategory | heroMissileCategory;

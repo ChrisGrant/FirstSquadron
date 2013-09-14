@@ -29,6 +29,7 @@
 		70E9FB9C17AA623500294419 /* HeroFighter.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E9FB9B17AA623500294419 /* HeroFighter.m */; };
 		70E9FB9F17AA635C00294419 /* SKEmitterNode+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 70E9FB9E17AA635C00294419 /* SKEmitterNode+Utilities.m */; };
 		70ED4DFF17A9430E0036A3AC /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70ED4DFE17A9430E0036A3AC /* CoreMotion.framework */; };
+		8338762317E4DFAF00E736D3 /* enemy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8338762217E4DFAF00E736D3 /* enemy@2x.png */; };
 		83F11EBC17C0BFA00007F3E7 /* EnemyFighter.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F11EBB17C0BFA00007F3E7 /* EnemyFighter.m */; };
 		83F11EBF17C0BFCA0007F3E7 /* Fighter.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F11EBE17C0BFCA0007F3E7 /* Fighter.m */; };
 		83FA1A9A17E24F0A009AE888 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83FA1A9917E24F0A009AE888 /* logo@2x.png */; };
@@ -70,6 +71,7 @@
 		70E9FB9D17AA635C00294419 /* SKEmitterNode+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SKEmitterNode+Utilities.h"; sourceTree = "<group>"; };
 		70E9FB9E17AA635C00294419 /* SKEmitterNode+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SKEmitterNode+Utilities.m"; sourceTree = "<group>"; };
 		70ED4DFE17A9430E0036A3AC /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		8338762217E4DFAF00E736D3 /* enemy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "enemy@2x.png"; sourceTree = "<group>"; };
 		83F11EBA17C0BFA00007F3E7 /* EnemyFighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = EnemyFighter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		83F11EBB17C0BFA00007F3E7 /* EnemyFighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = EnemyFighter.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		83F11EBD17C0BFCA0007F3E7 /* Fighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fighter.h; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				83FA1A9B17E26537009AE888 /* spitfire@2x.png */,
+				8338762217E4DFAF00E736D3 /* enemy@2x.png */,
 				70907EB017993D5A00F83417 /* Images.xcassets */,
 				70907ECE1799509A00F83417 /* spark.png */,
 				83FA1A9917E24F0A009AE888 /* logo@2x.png */,
@@ -269,6 +272,7 @@
 				70907EA417993D5A00F83417 /* Main_iPhone.storyboard in Resources */,
 				70907ECF1799509A00F83417 /* CloudParticleEmitter.sks in Resources */,
 				83FA1A9A17E24F0A009AE888 /* logo@2x.png in Resources */,
+				8338762317E4DFAF00E736D3 /* enemy@2x.png in Resources */,
 				70907E9B17993D5A00F83417 /* InfoPlist.strings in Resources */,
 				701BA141179999AC00F7B989 /* DamageSmoke.sks in Resources */,
 				704EA61D17A7C17E00201949 /* Explosion.sks in Resources */,

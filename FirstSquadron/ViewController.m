@@ -10,17 +10,13 @@
 
 @implementation ViewController  {
     FighterGameScene *scene;
-    
     UIButton *_startButton;
-    
     UIButton *pauseButton;
     UILabel *_scoreLabel;
     UILabel *_healthLabel;
-    
     UILabel *_gameOverLabel;
     UILabel *_gameOverDetailsLabel;
-    
-    UIImageView *iv;
+    UIImageView *_logoImageView;
 }
 
 -(void)viewDidLoad {
@@ -28,6 +24,10 @@
 
     // Configure the view.
     SKView *skView = (SKView*)self.view;
+    
+    skView.showsDrawCount = YES;
+    skView.showsFPS = YES;
+    skView.showsNodeCount = YES;
     
     // Create and configure the scene.
     scene = [FighterGameScene sceneWithSize:skView.bounds.size];
@@ -44,9 +44,9 @@
     [_gameOverLabel setHidden:YES];
     [self.view addSubview:_gameOverLabel];
     
-    iv = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
-    [iv setCenter:CGPointMake(self.view.center.x, self.view.center.y - 100)];
-    [self.view addSubview:iv];
+    _logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    [_logoImageView setCenter:CGPointMake(self.view.center.x, self.view.center.y - 100)];
+    [self.view addSubview:_logoImageView];
     
     _gameOverDetailsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height / 2 - 65, self.view.bounds.size.width, 100)];
     [_gameOverDetailsLabel setNumberOfLines:0];
@@ -102,13 +102,13 @@
         [_gameOverLabel setAlpha:0.0f];
         [_gameOverDetailsLabel setAlpha:0.0f];
         [_startButton setAlpha:0.0f];
-        [iv setAlpha:0.0f];
+        [_logoImageView setAlpha:0.0f];
         [pauseButton setAlpha:1.0f];
     } completion:^(BOOL finished) {
         [_gameOverLabel setHidden:YES];
         [_gameOverDetailsLabel setHidden:YES];
         [_startButton setHidden:YES];
-        [iv setHidden:YES];
+        [_logoImageView setHidden:YES];
         [pauseButton setHidden:NO];
     }];
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
@@ -149,7 +149,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [_startButton setTitle:@"RESTART" forState:UIControlStateNormal];
-    [_gameOverDetailsLabel setText:[NSString stringWithFormat:@"YOUR SCORE: %i\nTop Score: %i",  finalScore, topScore.intValue]];
+    [_gameOverDetailsLabel setText:[NSString stringWithFormat:@"YOUR SCORE: %i\nTOP SCORE: %i",  finalScore, topScore.intValue]];
     
     [UIView animateWithDuration:0.3 animations:^{
         [_startButton setAlpha:1.0f];

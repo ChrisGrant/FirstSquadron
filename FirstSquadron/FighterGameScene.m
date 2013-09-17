@@ -157,7 +157,7 @@
     // An enemy plane has hit something
     else if(contact.bodyA.categoryBitMask == enemyFighterCategory || contact.bodyB.categoryBitMask == enemyFighterCategory) {
         SKNode *enemyBody = contact.bodyA.categoryBitMask == enemyFighterCategory ? contact.bodyA.node : contact.bodyB.node;
-        [enemyBody runAction:[SKAction sequence:@[[SKAction removeFromParent]]]];
+        [enemyBody runAction:[SKAction removeFromParent]];
         
         BOOL explode = NO;
         if(contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) {

@@ -8,11 +8,8 @@
 
 #import "Fighter.h"
 #import "SpriteCategories.h"
-#import "SKEmitterNode+Utilities.h"
 
 @implementation Fighter {
-    SKEmitterNode *_smokeEmitter;
-    SKEmitterNode *_fireEmitter;
     NSTimer *_timer;
 }
 
@@ -24,18 +21,6 @@
         
         self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:fighterSprite.size];
         self.physicsBody.usesPreciseCollisionDetection = YES;
-        
-        _smokeEmitter = [SKEmitterNode emitterNamed:@"DamageSmoke"];
-        _smokeEmitter.position = CGPointMake(0, 30);
-        [_smokeEmitter setParticleAlpha:0.0];
-        [_smokeEmitter setParticleColor:[SKColor whiteColor]];
-        [self addChild:_smokeEmitter];
-        
-        _fireEmitter = [SKEmitterNode emitterNamed:@"Fire"];
-        _fireEmitter.position = CGPointMake(0, 15);
-        [_fireEmitter setParticleAlpha:0.0];
-        [self addChild:_fireEmitter];
-        
         [self addChild:fighterSprite];
         
         self.health = 1.0;
@@ -53,12 +38,7 @@
 }
 
 -(void)updateEffectsFromHealth {
-    [_smokeEmitter setParticleAlpha:1 - _health];
-    [_smokeEmitter setParticleColor:[SKColor colorWithWhite:1 - _health alpha:1.0]];
-    
-    if(_health < 0.3) {
-        [_fireEmitter setParticleAlpha:1.0];
-    }
+    // Override in subclass if you want to add effects based on the health
 }
 
 -(void)fireMissle {

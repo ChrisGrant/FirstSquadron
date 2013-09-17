@@ -181,11 +181,10 @@
                                                     [SKAction removeFromParent]]]];
         }
     }
+    
     // Hero/Enemy missle has hit something - remove. If it had an effect on anything we should have done that above.
-    else {
-        [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
-        [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
-    }
+    [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
+    [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
 }
 
 -(void)checkContactAndRemoveBody:(SKPhysicsContact*)contact withCategory:(FighterGameCategories)bitmask {

@@ -14,8 +14,8 @@
 -(id)init {
     if(self = [super init]) {
         self.physicsBody.categoryBitMask = heroMissileCategory;
-        self.physicsBody.collisionBitMask = enemyFighterCategory;
-        self.physicsBody.contactTestBitMask = enemyFighterCategory;
+        self.physicsBody.collisionBitMask = enemyFighterCategory | heroBoundingBoxCategory;
+        self.physicsBody.contactTestBitMask = enemyFighterCategory | heroBoundingBoxCategory;
         self.physicsBody.mass = 100;
     }
     return self;

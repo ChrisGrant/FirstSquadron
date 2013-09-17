@@ -50,7 +50,8 @@
     return 0.0;
 }
 
--(void)dealloc {
+-(void)removeFromParent {
+    [super removeFromParent];
     [_timer invalidate];
 }
 

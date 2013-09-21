@@ -14,7 +14,6 @@
     UIButton *pauseButton;
     UILabel *_scoreLabel;
     UILabel *_healthLabel;
-    UILabel *_gameOverLabel;
     UILabel *_gameOverDetailsLabel;
     UIImageView *_logoImageView;
 }
@@ -25,10 +24,6 @@
     // Configure the view.
     SKView *skView = (SKView*)self.view;
     
-    skView.showsDrawCount = YES;
-    skView.showsFPS = YES;
-    skView.showsNodeCount = YES;
-    
     // Create and configure the scene.
     scene = [FighterGameScene sceneWithSize:skView.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
@@ -36,19 +31,12 @@
     
     scene.interfaceDelegate = self;
     
-    _gameOverLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height / 2 - 120, self.view.bounds.size.width, 50)];
-    [_gameOverLabel setText:@"GAME OVER"];
-    [_gameOverLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:40.0f]];
-    [_gameOverLabel setTextAlignment:NSTextAlignmentCenter];
-    [_gameOverLabel setTextColor:[UIColor whiteColor]];
-    [_gameOverLabel setHidden:YES];
-    [self.view addSubview:_gameOverLabel];
-    
     _logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
     [_logoImageView setCenter:CGPointMake(self.view.center.x, self.view.center.y - 100)];
     [self.view addSubview:_logoImageView];
     
-    _gameOverDetailsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height / 2 - 65, self.view.bounds.size.width, 100)];
+    _gameOverDetailsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height / 2 - 25,
+                                                                      self.view.bounds.size.width, 100)];
     [_gameOverDetailsLabel setNumberOfLines:0];
     [_gameOverDetailsLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f]];
     [_gameOverDetailsLabel setTextAlignment:NSTextAlignmentCenter];
@@ -98,14 +86,12 @@
     [scene recalibrate];
     [scene start];
     
-    [UIView animateWithDuration:0.3 animations:^{
-        [_gameOverLabel setAlpha:0.0f];
+    [UIView animateWithDuration:0.6 animations:^{
         [_gameOverDetailsLabel setAlpha:0.0f];
         [_startButton setAlpha:0.0f];
         [_logoImageView setAlpha:0.0f];
         [pauseButton setAlpha:1.0f];
     } completion:^(BOOL finished) {
-        [_gameOverLabel setHidden:YES];
         [_gameOverDetailsLabel setHidden:YES];
         [_startButton setHidden:YES];
         [_logoImageView setHidden:YES];
@@ -151,16 +137,16 @@
     [_startButton setTitle:@"RESTART" forState:UIControlStateNormal];
     [_gameOverDetailsLabel setText:[NSString stringWithFormat:@"YOUR SCORE: %i\nTOP SCORE: %i",  finalScore, topScore.intValue]];
     
-    [UIView animateWithDuration:0.3 animations:^{
+    [UIView animateWithDuration:0.6 animations:^{
         [_startButton setAlpha:1.0f];
         [pauseButton setAlpha:0.0f];
         [_gameOverDetailsLabel setAlpha:1.0f];
-        [_gameOverLabel setAlpha:1.0f];
+        [_logoImageView setAlpha:1.0f];
     } completion:^(BOOL finished) {
         [_startButton setHidden:NO];
         [pauseButton setHidden:YES];
         [_gameOverDetailsLabel setHidden:NO];
-        [_gameOverLabel setHidden:NO];
+        [_logoImageView setHidden:NO];
     }];
 }
 

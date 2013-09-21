@@ -39,17 +39,18 @@
             [_motionManager setAccelerometerUpdateInterval:1.0/30.0];
             [_motionManager startDeviceMotionUpdates];
             [_motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new]
-                                                withHandler:^(CMDeviceMotion *motion, NSError *error) {
-                if(!_referenceAttitude) {
-                    _referenceAttitude = motion.attitude;
-                }
-                else {
-                    CMAttitude *attitude = motion.attitude;
-                    // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
-                    [attitude multiplyByInverseOfAttitude:_referenceAttitude];
-                    [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
-                }
-            }];
+                                                withHandler:^(CMDeviceMotion *motion, NSError *error)
+             {
+                 if(!_referenceAttitude) {
+                     _referenceAttitude = motion.attitude;
+                 }
+                 else {
+                     CMAttitude *attitude = motion.attitude;
+                     // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
+                     [attitude multiplyByInverseOfAttitude:_referenceAttitude];
+                     [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
+                 }
+             }];
         }
         
         SKSpriteNode *ground = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:0.6 green:0.6 blue:1.0 alpha:1.0] size:size];
@@ -107,20 +108,22 @@
 
 // If the hero's health is below 0, then explode the hero fighter and remove it.
 -(void)checkIfHeroIsStillAlive {
-    if(_heroFighter.health <= 0) {
-        SKEmitterNode *emitter = [SKEmitterNode emitterNamed:@"Explosion"];
-        emitter.position = _heroFighter.position;
-        [emitter setScale:1];
-        [emitter setParticleLifetime:2];
-        [emitter runAction:[SKAction sequence:@[[SKAction moveByX:0 y:-self.size.height duration:2.5f],
-                                                [SKAction fadeAlphaTo:0 duration:1.0],
-                                                [SKAction removeFromParent]]]];
-        [self addChild:emitter];
-        [_heroFighter removeFromParent];
-        _heroFighter = nil;
-        
-        [self.interfaceDelegate updateHealth:0];
-        [self.interfaceDelegate gameOver:_score];
+    if(_heroFighter) {
+        if(_heroFighter.health <= 0.0) {
+            SKEmitterNode *emitter = [SKEmitterNode emitterNamed:@"Explosion"];
+            emitter.position = _heroFighter.position;
+            [emitter setScale:1];
+            [emitter setParticleLifetime:2];
+            [emitter runAction:[SKAction sequence:@[[SKAction moveByX:0 y:-self.size.height duration:2.5f],
+                                                    [SKAction fadeAlphaTo:0 duration:1.0],
+                                                    [SKAction removeFromParent]]]];
+            [self addChild:emitter];
+            [_heroFighter removeFromParent];
+            _heroFighter = nil;
+            
+            [self.interfaceDelegate updateHealth:0];
+            [self.interfaceDelegate gameOver:_score];
+        }
     }
 }
 
@@ -151,7 +154,6 @@
         SKNode *enemyMissle = contact.bodyA.categoryBitMask == enemyMissleCategory ? contact.bodyA.node : contact.bodyB.node;
         [enemyMissle runAction:[SKAction removeFromParent]];
         _heroFighter.health -= 0.05;
-        [self checkIfHeroIsStillAlive];
         [self.interfaceDelegate updateHealth:_heroFighter.health];
     }
     // An enemy plane has hit something
@@ -161,9 +163,8 @@
         
         BOOL explode = NO;
         if(contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) {
-            _heroFighter.health -= 0.1;
+            _heroFighter.health -= 0.15;
             [self.interfaceDelegate updateHealth:_heroFighter.health];
-            [self checkIfHeroIsStillAlive];
             explode = YES;
         }
         else if (contact.bodyA.categoryBitMask == heroMissileCategory || contact.bodyB.categoryBitMask == heroMissileCategory) {
@@ -185,6 +186,8 @@
     // Hero/Enemy missle has hit something - remove. If it had an effect on anything we should have done that above.
     [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
     [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
+    
+    [self checkIfHeroIsStillAlive];
 }
 
 -(void)checkContactAndRemoveBody:(SKPhysicsContact*)contact withCategory:(FighterGameCategories)bitmask {

@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_OPTIONS(NSUInteger, FighterGameCategories) {
-    heroFighterCategory                 = 0,
-    enemyFighterCategory   = 1 << 0,
-    heroMissileCategory        = 1 << 1,
-    enemyMissleCategory  = 1 << 2,
-    heroBoundingBoxCategory    = 1 << 3
+    heroFighterCategory     = 0,
+    enemyFighterCategory    = 1 << 0,
+    heroMissileCategory     = 1 << 1,
+    enemyMissleCategory     = 1 << 2,
+    heroBoundingBoxCategory = 1 << 3
 };

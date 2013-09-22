@@ -28,29 +28,26 @@
         self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
         // Make the body 3 times larger than the visible area so that planes can move off the screen and don't disappear
         // or collide immediately when they hit the edge of the view.
-        CGRect bodyRect = CGRectInset(CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3), 0, 0);
+        CGRect bodyRect = CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3);
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:bodyRect];
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         
         // Use the device's roll and pitch to move the hero fighter.
-        _motionManager = [[CMMotionManager alloc] init];
-        if([_motionManager isDeviceMotionAvailable]) {
-            [_motionManager setAccelerometerUpdateInterval:1.0/30.0];
-            [_motionManager startDeviceMotionUpdates];
-            [_motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new]
-                                                withHandler:^(CMDeviceMotion *motion, NSError *error)
+        CMMotionManager *motionManager = [[CMMotionManager alloc] init];
+        if([motionManager isDeviceMotionAvailable]) {
+            [motionManager setAccelerometerUpdateInterval:1.0/30.0];
+            [motionManager startDeviceMotionUpdates];
+            [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new] withHandler:^(CMDeviceMotion *motion, NSError *error)
              {
                  if(!_referenceAttitude) {
                      _referenceAttitude = motion.attitude;
                  }
-                 else {
-                     if(!self.scene.isPaused) {
-                         CMAttitude *attitude = motion.attitude;
-                         // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
-                         [attitude multiplyByInverseOfAttitude:_referenceAttitude];
-                         [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
-                     }
+                 else if(!self.scene.isPaused) {
+                     CMAttitude *attitude = motion.attitude;
+                     // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
+                     [attitude multiplyByInverseOfAttitude:_referenceAttitude];
+                     [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
                  }
              }];
         }
@@ -105,11 +102,12 @@
 }
 
 -(void)recalibrate {
-    _referenceAttitude = nil; // Reset ref attiude so future motion events are multiplied by the inverse of the next available motion update.
+    // Reset ref attiude so future motion events are multiplied by the inverse of the next available motion update.
+    _referenceAttitude = nil;
 }
 
-// If the hero's health is below 0, then explode the hero fighter and remove it.
 -(void)checkIfHeroIsStillAlive {
+    // If the hero's health is below 0, then explode the hero fighter and remove it.
     if(_heroFighter) {
         if(_heroFighter.health <= 0.0) {
             SKEmitterNode *emitter = [SKEmitterNode emitterNamed:@"Explosion"];
@@ -180,15 +178,13 @@
             emitter.position = enemyBody.position;
             emitter.particleAlpha = 0.5;
             [self addChild:emitter];
-            [emitter runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:0.3],
-                                                    [SKAction removeFromParent]]]];
+            [emitter runAction:[SKAction sequence:@[[SKAction fadeAlphaTo:0 duration:0.3], [SKAction removeFromParent]]]];
         }
     }
     
     // Hero/Enemy missle has hit something - remove. If it had an effect on anything we should have done that above.
     [self checkContactAndRemoveBody:contact withCategory:enemyMissleCategory];
     [self checkContactAndRemoveBody:contact withCategory:heroMissileCategory];
-    
     [self checkIfHeroIsStillAlive];
 }
 

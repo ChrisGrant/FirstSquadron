@@ -45,15 +45,17 @@
 }
 
 -(void)fireMissle {
-    HeroMissile *missle1 = [HeroMissile new];
-    missle1.position = CGPointMake(self.position.x - 17, self.position.y + 16);
-    [self.parent addChild:missle1];
-    [missle1.physicsBody applyImpulse:CGVectorMake(0, 40000)];
-    
-    HeroMissile *missle2 = [HeroMissile new];
-    missle2.position = CGPointMake(self.position.x + 17, self.position.y + 16);
-    [self.parent addChild:missle2];
-    [missle2.physicsBody applyImpulse:CGVectorMake(0, 40000)];
+    if(!self.scene.paused) {
+        HeroMissile *missle1 = [HeroMissile new];
+        missle1.position = CGPointMake(self.position.x - 17, self.position.y + 16);
+        [self.parent addChild:missle1];
+        [missle1.physicsBody applyImpulse:CGVectorMake(0, 40000)];
+        
+        HeroMissile *missle2 = [HeroMissile new];
+        missle2.position = CGPointMake(self.position.x + 17, self.position.y + 16);
+        [self.parent addChild:missle2];
+        [missle2.physicsBody applyImpulse:CGVectorMake(0, 40000)];
+    }
 }
 
 -(void)updateEffectsFromHealth {

@@ -45,10 +45,12 @@
                      _referenceAttitude = motion.attitude;
                  }
                  else {
-                     CMAttitude *attitude = motion.attitude;
-                     // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
-                     [attitude multiplyByInverseOfAttitude:_referenceAttitude];
-                     [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
+                     if(!self.scene.isPaused) {
+                         CMAttitude *attitude = motion.attitude;
+                         // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
+                         [attitude multiplyByInverseOfAttitude:_referenceAttitude];
+                         [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
+                     }
                  }
              }];
         }

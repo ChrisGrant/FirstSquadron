@@ -30,10 +30,12 @@
 }
 
 -(void)fireMissle {
-    EnemyMissile *missle = [EnemyMissile new];
-    missle.position = CGPointMake(self.position.x, self.position.y - 30);
-    [self.parent addChild:missle];
-    [missle.physicsBody applyImpulse:CGVectorMake(0, -5)];
+    if(!self.scene.paused) {
+        EnemyMissile *missle = [EnemyMissile new];
+        missle.position = CGPointMake(self.position.x, self.position.y - 30);
+        [self.parent addChild:missle];
+        [missle.physicsBody applyImpulse:CGVectorMake(0, -5)];
+    }
 }
 
 @end

@@ -1,21 +1,37 @@
-#Introduction
+#2D Game Development with SpriteKit
+
+When Apple announced iOS 7 back in June at WWDC, they also announced a number of exciting new APIs for developers. The API that caught my attention the most was SpriteKit. This is a new 2D rendering engine built primarily for game development. It allows you to compile the the same code for iOS and OSX, meaning with just a few tweaks you can build a game that is available on Mac, iPad, iPod and iPhone! Combine this with the new GameController API, the rumours of a new Apple TV and the predicted, rapid high level of iOS 7 adoption and you have something pretty exciting!
+
+As soon as the developer preview SDK and documentation was released I started exploring the new API. I found the API very easy to get to grips with, especially after watching the WWDC videos and reading through the documentation. I’d never done any game development before, so this blog explains the very basics of getting a simple game up and running with SpriteKit.
 
 
-#Building the Game
+##1st Squadron
+
+![First Squadron Logo](https://raw.github.com/ChrisGrant/FirstSquadron/master/FirstSquadron/logo@2x.png)
+
+*1st Squadron Logo*
+
+The game built is a top down WWII fighter plane game set over the English Channel. Enemy planes are launched from the top of the screen and it is your job, as the hero, to destroy these planes before they reach the bottom! You win points by destroying enemy planes, but lose health if an enemy plane hits you with a bullet or crashes into you!
+
+![screenshots](screenshots.png)
+
+*Screenshots from the game*
+
+##Building the Game
 
 The following will walk you through how the game was built. It's not a complete explanation of every line of code, but it will give you a good idea of how to set up a similar game for yourself. It would be useful to have a copy of the code when reading this article however. To download the code for yourself and see how it's done, head over to [GitHub](https://github.com/ChrisGrant/FirstSquadron "GitHub First Squadron Repository").
 
-##Game Structure
+###Game Structure
 The structure of the game is relatively simple. 
 
-##Setting up the Scene
+###Setting up the Scene
 
 The first step when creating the scene is to configure the physics world. 
 
 ![The visible and whole scene](bounding.png)
 
 
-##Adding the Fighters
+###Adding the Fighters
 
 The `Fighter` base class defines the common properties and behaviour of a fighter. This makes creating new fighters in future and adding theme to the scene simple. Every fighter fires missiles and has a health. There are currently two subclasses. `HeroFighter` and `EnemyFighter`. Each subclass specifies various properties such as `categoryBitMask`, `collisionBitMask`, `contactTestBitMask` and `mass`. The `HeroFighter` class also sets `allowsRotation` to `NO`. This is how we ensure the fighter always faces the top of the scene.  
 
@@ -25,7 +41,7 @@ The fighters themselves are simply sprite images:
 
 These were created in photoshop and based on blueprints of the *Messerschmitt Bf 109* and the *Submarine Spitfire*. 
 
-###Launching Enemy Fighters
+####Launching Enemy Fighters
 
 The enemy fighters are launched every 5 seconds using an NSTimer. 
 
@@ -34,15 +50,15 @@ The enemy fighters are launched every 5 seconds using an NSTimer.
     
 This calls the `launchEnemyFighters` method, which instantiates and five `EnemyFighter` instances, rotates them 180 degrees, places them in different locations and then applies an impluse to all of them so they move downwards towards the bottom of the scene.
 
-![An Enemy Exploding](enemyplanes.png)
+![An Enemy Exploding](enemyPlanes.png)
 
 *5 enemy planes flying in formation*
 
-###Launching the Hero
+####Launching the Hero
 
 The hero is added to center of the the scene immediately after the user hits the **START** or **RESTART** buttons.
 
-##Controlling the Hero Plane
+###Controlling the Hero Plane
 
 To control the hero plane, we instantiate a `CMMotionManager` object in the constructor. On the first update, we want to store a reference to current motion's attitude. By doing so, we can multiply future updates by this reference attitude and use the result as the relative attitude:
 
@@ -56,13 +72,13 @@ Once we have calculated the relative attitude, we move the plane by applying an 
 	
 This simple block of code gives the user the ability to move the hero around the scene!
 
-##Collision Handling
+###Collision Handling
 
 By setting the `contactDelegate` of the `physicsBody` to self, this allows us to detect collisions. Implementing the following method will give us access to these collisions.
 
 	-(void)didBeginContact:(SKPhysicsContact*)contact
 
-###Hero Collision
+####Hero Collision
 
 The only collisions we are interested in with the hero are with enemy missiles and enemy planes. We check the enemy plane collision in the enemy plane category, so the only scenario we need to cater for in the first if statement is if the hero hits an enemy missile and vice-versa. This leads to a rather convoluted if statement!
 
@@ -71,7 +87,7 @@ The only collisions we are interested in with the hero are with enemy missiles a
 
 If the hero does collide with an enemy missle and we do enter this if statement, we immediately remove the missile and decrement the hero's health by 0.05. 
 
-###Enemy Collision
+####Enemy Collision
 
 Whenever an enemy fighter collides with something we want to remove it. However, we want to do different things depending on what the enemy collided with. 
 
@@ -93,19 +109,21 @@ This just adds an explosion particle emitter where the collision occurred, fades
 
 *An enemy plane exploding*
 
-###Missile Collision
+####Missile Collision
 
 If a missle collides with anything, we want to remove it, regardless of what it was. We do this last as if it colldies with a plane, we want to check that above.
 
 
-##Keeping the hero inside the visible screen area
+###Keeping the hero inside the visible screen area
 
 We want the hero to stay inside of the visible screen area at all times. Otherwise the user could lose the fighter and not know where it currently is in the scene.  When we are setting up the scene we add a clear `SKSpriteNode` called `heroBox` with a size slightly smaller than the visible screen area. When setting the box's `physicsBody`, we use the `SKPhysicsBody bodyWithEdgeLoopFromRect`. This creates a rectangular loop which will mean the hero can not move outside of that area. To ensure this **only** effects the hero fighter and nothing else in the physics world, we set the physicsBody's `contactTestBitMask` to `heroFighterCategory`. We also must set the `contactTestBitMask` on the hero figher to `heroBoundingBoxCategory` too to ensure that they collide.
 
-#Hints and Tips
+##Hints and Tips
 
--	###Keep it simple
+-	**Keep it simple**
+
 	I originally had the vast majority of my code in `FighterGameScene` when I started out. I was creating sprites and managing them from inside of this class. It's easier at first but as soon as you start adding any complexity it becomes unmanagable. So make sure that your code belongs in the scene and that it has to be there. 
 
--	###Debugging Collisions
+-	**Debugging Collisions**
+
 	One of the most time consuming things when creating the game was debugging collisions between `SKPhysicsBody` objects. The first step is ensuring you have set the correct `categoryBitMask` on the objects when you create them, and that they have the correct `contactTestBitMask` too. A `SKPhysicsBody` won't collide with any object that isn't specified in it's `contactTestBitMask`. Also be sure to check *both* bodies of a `SKPhysicsContact`. They aren't guaranteed to be in any particular order. 

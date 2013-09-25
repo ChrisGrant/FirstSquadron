@@ -26,31 +26,14 @@
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
+
+        self.physicsWorld.contactDelegate = self;
+        self.physicsWorld.gravity = CGVectorMake(0, 0);
+        
         // Make the body 3 times larger than the visible area so that planes can move off the screen and don't disappear
         // or collide immediately when they hit the edge of the view.
         CGRect bodyRect = CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3);
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:bodyRect];
-        self.physicsWorld.contactDelegate = self;
-        self.physicsWorld.gravity = CGVectorMake(0, 0);
-        
-        // Use the device's roll and pitch to move the hero fighter.
-        CMMotionManager *motionManager = [[CMMotionManager alloc] init];
-        if([motionManager isDeviceMotionAvailable]) {
-            [motionManager setAccelerometerUpdateInterval:1.0/30.0];
-            [motionManager startDeviceMotionUpdates];
-            [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new] withHandler:^(CMDeviceMotion *motion, NSError *error)
-             {
-                 if(!_referenceAttitude) {
-                     _referenceAttitude = motion.attitude;
-                 }
-                 else if(!self.scene.isPaused) {
-                     CMAttitude *attitude = motion.attitude;
-                     // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
-                     [attitude multiplyByInverseOfAttitude:_referenceAttitude];
-                     [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
-                 }
-             }];
-        }
         
         SKSpriteNode *ground = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:0.6 green:0.6 blue:1.0 alpha:1.0] size:size];
         ground.position = CGPointMake((self.frame.size.width / 2), (self.frame.size.height / 2));
@@ -80,6 +63,25 @@
         // Launch enemy fighters every 5 seconds.
         NSTimer *timer = [NSTimer timerWithTimeInterval:5.0 target:self selector:@selector(launchEnemyFighters) userInfo:nil repeats:YES];
         [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+        
+        // Use the device's roll and pitch to move the hero fighter.
+        CMMotionManager *motionManager = [[CMMotionManager alloc] init];
+        if([motionManager isDeviceMotionAvailable]) {
+            [motionManager setAccelerometerUpdateInterval:1.0/30.0];
+            [motionManager startDeviceMotionUpdates];
+            [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new] withHandler:^(CMDeviceMotion *motion, NSError *error)
+             {
+                 if(!_referenceAttitude) {
+                     _referenceAttitude = motion.attitude;
+                 }
+                 else if(!self.scene.isPaused) {
+                     CMAttitude *attitude = motion.attitude;
+                     // Multiply by the inverse of the reference attitude so motion is relative to the start attitude.
+                     [attitude multiplyByInverseOfAttitude:_referenceAttitude];
+                     [_heroFighter.physicsBody applyImpulse:CGVectorMake(attitude.roll * 250, -attitude.pitch * 200)];
+                 }
+             }];
+        }
     }
     return self;
 }

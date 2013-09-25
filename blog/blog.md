@@ -21,15 +21,53 @@ The game built is a top down WWII fighter plane game set over the English Channe
 
 The following will walk you through how the game was built. It's not a complete explanation of every line of code, but it will give you a good idea of how to set up a similar game for yourself. It would be useful to have a copy of the code when reading this article however. To download the code for yourself and see how it's done, head over to [GitHub](https://github.com/ChrisGrant/FirstSquadron "GitHub First Squadron Repository").
 
-###Game Structure
-The structure of the game is relatively simple. 
+###Application Structure
+The structure of the app is relatively simple. We have a single `UIViewController` named `ViewController` which is created by the `AppDelegate` and added to the key window.  I won't be going into any detail about the View Controller in this post. All it does is create and add the `FighterGameScene` as a subview, add a few labels, logos and buttons, and controls the interaction between these buttons and labels and the scene.
 
 ###Setting up the Scene
 
-The first step when creating the scene is to configure the physics world. 
+##### Configuration
+*'A scene is the root node of your content. It is used to display SpriteKit content on an SKView.'*  - SKScene Docs
+
+Our SKScene subclass is called `FighterGameScene.` This is where we define the behaviour of our game. The first step when creating the scene is to configure the physics world. This is done in the constructor of the `FighterGameScene`. The first thing we do is to set the scene as the `contactDelegate` of it's physics world. This allows us to detect collisions in the scene, which is something we will discuss later. We also define the `gravity` of our physics world here. As this is a top down, 2D game, gravity is defined with `CGVectorMake(0,0)`. This means that gravity will not effect our scene at all.
+
+After the world is configured the physics body must be set up. The physics body in this case is a simple `SKPhysicsBody` defined with `bodyWithEdgeLoopFromRect`. We need a physics body with an edge loop because it means that nodes outside of the visible area can be removed. We need to keep removing nodes that will never appear again to keep the memory footprint of the application as low as possible. Due to the nature of the game, it knows that if something collides with the physics body's edge loop, it can be removed.
+
+However, we don't want the nodes to be removed as soon as they collide with the edge of the scene. It would look strange if an enemy fighter plane's nose touched the bottom of the view and then the rest of it suddenly vanished before the tail had a chance to reach the bottom! Therefore, the size of physics loop must be bigger than the size of the visible area. 
+	
+        CGRect bodyRect = CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3);
+        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:bodyRect];
+
+The illustration below gives an idea of how this effects the scene. The planes will continue to animate until they reach the very bottom of the physics body, rather than vanishing as soon as they reach the edge. The same applies for missiles.
 
 ![The visible and whole scene](bounding.png)
 
+*An illustration of the physics body from the game. The red box indicates the visible area, and the region outside indicates the full size of the physics body.*
+
+The next step is to keep the hero fighter inside of the visible area. If it leaves the visible area then the user will be disoriented and not know how to tilt their device! We do this with another physics body created with an edge loop.
+
+	        SKSpriteNode *heroBox = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(size.width - 5, size.height - 5)];
+        heroBox.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(-(size.width / 2), -(size.height / 2), size.width - 5, size.height - 5)];
+        heroBox.physicsBody.categoryBitMask = heroBoundingBoxCategory;
+        heroBox.physicsBody.contactTestBitMask = heroFighterCategory;
+        heroBox.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+        [_fighterLayer addChild:heroBox];
+        
+This will give us the "red box" shown in the illustration above. We make it clear so it is invisible, give it a physics body with an edge loop that is slightly smaller than the visible area, and then set the category and contact bitmasks so that the hero fighter won't be able to escape.
+
+##### Adding the visual Layers
+
+To add some depth the scene there are multiple SKSpriteNodes in the scene's heirarchy. The ground represents the sea - it's just a blue SKSpriteNode. The first Cloud layer is placed on top of the ground layer. The next layer added to the scene is the Fighter layer. This is where all of the fighters will be placed and will interact with each other. Finally, we add another Cloud layer to the scene. This results in the following heirarchy:
+
+- FighterGameScene
+	- Ground
+		- Clouds
+	- Fighters
+	- Clouds
+
+By having two cloud layers, we add some depth to the scene as the fighter appears to fly through the clouds. Sometimes it will appear above clouds, sometimes below clouds, and sometimes both. The cloud layers are `SKEmitterNode` instances, and they are configured in .sks files. 
+
+That's it! The scene is set up and ready to add fighters, missiles and explosions to!
 
 ###Adding the Fighters
 

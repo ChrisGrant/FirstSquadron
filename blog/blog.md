@@ -1,6 +1,6 @@
 #2D Game Development with SpriteKit
 
-When Apple announced iOS 7 back in June at WWDC, they also announced a number of exciting new APIs for developers. The API that caught my attention the most was SpriteKit. This is a new 2D rendering engine built primarily for game development. It allows you to compile the the same code for iOS and OSX, meaning with just a few tweaks you can build a game that is available on Mac, iPad, iPod and iPhone! Combine this with the new GameController API, the rumours of a new Apple TV and the predicted, rapid high level of iOS 7 adoption and you have something pretty exciting!
+When Apple announced iOS 7 back in June at WWDC, they also announced a number of exciting new APIs for developers. The API that caught my attention the most was SpriteKit. This is a new 2D rendering engine built primarily for game development. It allows you to compile the same code for iOS and OSX, meaning with just a few tweaks you can build a game that is available on Mac, iPad, iPod and iPhone! Combine this with the new GameController API, the rumours of a new Apple TV and the predicted, rapid high level of iOS 7 adoption and you have something pretty exciting!
 
 As soon as the developer preview SDK and documentation was released I started exploring the new API. I found the API very easy to get to grips with, especially after watching the WWDC videos and reading through the documentation. I’d never done any game development before, so this blog explains the very basics of getting a simple game up and running with SpriteKit.
 
@@ -35,8 +35,8 @@ After the world is configured the physics body must be set up. The physics body 
 
 However, we don't want the nodes to be removed as soon as they collide with the edge of the scene. It would look strange if an enemy fighter plane's nose touched the bottom of the view and then the rest of it suddenly vanished before the tail had a chance to reach the bottom! Therefore, the size of physics loop must be bigger than the size of the visible area. 
 	
-        CGRect bodyRect = CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3);
-        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:bodyRect];
+	CGRect bodyRect = CGRectMake(-size.width, -size.height, size.width * 3, size.height * 3);
+	self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:bodyRect];
 
 The illustration below gives an idea of how this effects the scene. The planes will continue to animate until they reach the very bottom of the physics body, rather than vanishing as soon as they reach the edge. The same applies for missiles.
 
@@ -44,16 +44,16 @@ The illustration below gives an idea of how this effects the scene. The planes w
 
 *An illustration of the physics body from the game. The red box indicates the visible area, and the region outside indicates the full size of the physics body.*
 
-The next step is to keep the hero fighter inside of the visible area. If it leaves the visible area then the user will be disoriented and not know how to tilt their device! We do this with another physics body created with an edge loop.
+The next step is to keep the hero fighter inside of the visible area. If it leaves the visible area then the user will be disoriented and not know how to tilt their device! We do this with another physics body created with an edge loop. We add a clear `SKSpriteNode` called `heroBox` with a size slightly smaller than the visible screen area. When setting the box's `physicsBody`, we use the `SKPhysicsBody bodyWithEdgeLoopFromRect`. This creates a rectangular loop which will mean the hero can not move outside of that area. To ensure this **only** effects the hero fighter and nothing else in the physics world, we set the physicsBody's `contactTestBitMask` to `heroFighterCategory`.
 
-	        SKSpriteNode *heroBox = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(size.width - 5, size.height - 5)];
-        heroBox.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(-(size.width / 2), -(size.height / 2), size.width - 5, size.height - 5)];
-        heroBox.physicsBody.categoryBitMask = heroBoundingBoxCategory;
-        heroBox.physicsBody.contactTestBitMask = heroFighterCategory;
-        heroBox.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
-        [_fighterLayer addChild:heroBox];
+	SKSpriteNode *heroBox = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(size.width - 5, size.height - 5)];
+	heroBox.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(-(size.width / 2), -(size.height / 2), size.width - 5, size.height - 5)];
+	heroBox.physicsBody.categoryBitMask = heroBoundingBoxCategory;
+	heroBox.physicsBody.contactTestBitMask = heroFighterCategory;
+	heroBox.position = CGPointMake(self.frame.size.width / 2, self.frame.size.height / 2);
+	[_fighterLayer addChild:heroBox];
         
-This will give us the "red box" shown in the illustration above. We make it clear so it is invisible, give it a physics body with an edge loop that is slightly smaller than the visible area, and then set the category and contact bitmasks so that the hero fighter won't be able to escape.
+This will give us the "red box" shown in the illustration above.
 
 ##### Adding the visual Layers
 
@@ -84,7 +84,7 @@ These were created in photoshop and based on blueprints of the *Messerschmitt Bf
 The enemy fighters are launched every 5 seconds using an NSTimer. 
 
 	NSTimer *timer = [NSTimer timerWithTimeInterval:5.0 target:self selector:@selector(launchEnemyFighters) userInfo:nil repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     
 This calls the `launchEnemyFighters` method, which instantiates and five `EnemyFighter` instances, rotates them 180 degrees, places them in different locations and then applies an impluse to all of them so they move downwards towards the bottom of the scene.
 
@@ -94,7 +94,7 @@ This calls the `launchEnemyFighters` method, which instantiates and five `EnemyF
 
 ####Launching the Hero
 
-The hero is added to center of the the scene immediately after the user hits the **START** or **RESTART** buttons.
+The hero is added to center of the scene immediately after the user hits the **START** or **RESTART** buttons.
 
 ###Controlling the Hero Plane
 
@@ -120,7 +120,7 @@ By setting the `contactDelegate` of the `physicsBody` to self, this allows us to
 
 The only collisions we are interested in with the hero are with enemy missiles and enemy planes. We check the enemy plane collision in the enemy plane category, so the only scenario we need to cater for in the first if statement is if the hero hits an enemy missile and vice-versa. This leads to a rather convoluted if statement!
 
-	    if((contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) &&
+	if((contact.bodyA.categoryBitMask == heroFighterCategory || contact.bodyB.categoryBitMask == heroFighterCategory) &&
        (contact.bodyA.categoryBitMask == enemyMissleCategory || contact.bodyB.categoryBitMask == enemyMissleCategory)) {
 
 If the hero does collide with an enemy missle and we do enter this if statement, we immediately remove the missile and decrement the hero's health by 0.05. 
@@ -151,11 +151,6 @@ This just adds an explosion particle emitter where the collision occurred, fades
 
 If a missle collides with anything, we want to remove it, regardless of what it was. We do this last as if it colldies with a plane, we want to check that above.
 
-
-###Keeping the hero inside the visible screen area
-
-We want the hero to stay inside of the visible screen area at all times. Otherwise the user could lose the fighter and not know where it currently is in the scene.  When we are setting up the scene we add a clear `SKSpriteNode` called `heroBox` with a size slightly smaller than the visible screen area. When setting the box's `physicsBody`, we use the `SKPhysicsBody bodyWithEdgeLoopFromRect`. This creates a rectangular loop which will mean the hero can not move outside of that area. To ensure this **only** effects the hero fighter and nothing else in the physics world, we set the physicsBody's `contactTestBitMask` to `heroFighterCategory`. We also must set the `contactTestBitMask` on the hero figher to `heroBoundingBoxCategory` too to ensure that they collide.
-
 ##Hints and Tips
 
 -	**Keep it simple**
@@ -165,3 +160,6 @@ We want the hero to stay inside of the visible screen area at all times. Otherwi
 -	**Debugging Collisions**
 
 	One of the most time consuming things when creating the game was debugging collisions between `SKPhysicsBody` objects. The first step is ensuring you have set the correct `categoryBitMask` on the objects when you create them, and that they have the correct `contactTestBitMask` too. A `SKPhysicsBody` won't collide with any object that isn't specified in it's `contactTestBitMask`. Also be sure to check *both* bodies of a `SKPhysicsContact`. They aren't guaranteed to be in any particular order. 
+	
+	
+If you have noticed any issues with the app or want to help develop it further, please raise an issue or create a pull request over at [GitHub](https://github.com/ChrisGrant/FirstSquadron, "GitHub").

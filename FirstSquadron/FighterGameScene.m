@@ -65,11 +65,11 @@
         [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
         
         // Use the device's roll and pitch to move the hero fighter.
-        CMMotionManager *motionManager = [[CMMotionManager alloc] init];
-        if([motionManager isDeviceMotionAvailable]) {
-            [motionManager setAccelerometerUpdateInterval:1.0/30.0];
-            [motionManager startDeviceMotionUpdates];
-            [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new] withHandler:^(CMDeviceMotion *motion, NSError *error)
+        _motionManager = [[CMMotionManager alloc] init];
+        if([_motionManager isDeviceMotionAvailable]) {
+            [_motionManager setAccelerometerUpdateInterval:1.0/30.0];
+            [_motionManager startDeviceMotionUpdates];
+            [_motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue new] withHandler:^(CMDeviceMotion *motion, NSError *error)
              {
                  if(!_referenceAttitude) {
                      _referenceAttitude = motion.attitude;

@@ -120,22 +120,22 @@
     [_healthLabel setText:[NSString stringWithFormat:@"%.0f%%", newHealth * 100]];
 }
 
--(void)updateScore:(int)newScore {
-    [_scoreLabel setText:[NSString stringWithFormat:@"SCORE: %i", newScore]];
+-(void)updateScore:(NSUInteger)newScore {
+    [_scoreLabel setText:[NSString stringWithFormat:@"SCORE: %lu", (unsigned long)newScore]];
 }
 
--(void)gameOver:(int)finalScore {
+-(void)gameOver:(NSUInteger)finalScore {
     [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 
     NSNumber *topScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"TOP_SCORE"];
     if(topScore == nil || topScore.intValue < finalScore) {
-        topScore = [NSNumber numberWithInt:finalScore];
+        topScore = [NSNumber numberWithInteger:finalScore];
         [[NSUserDefaults standardUserDefaults] setObject:topScore forKey:@"TOP_SCORE"];
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [_startButton setTitle:@"RESTART" forState:UIControlStateNormal];
-    [_gameOverDetailsLabel setText:[NSString stringWithFormat:@"YOUR SCORE: %i\nTOP SCORE: %i",  finalScore, topScore.intValue]];
+    [_gameOverDetailsLabel setText:[NSString stringWithFormat:@"YOUR SCORE: %lu\nTOP SCORE: %i",  (unsigned long)finalScore, topScore.intValue]];
     
     [UIView animateWithDuration:0.6 animations:^{
         [_startButton setAlpha:1.0f];

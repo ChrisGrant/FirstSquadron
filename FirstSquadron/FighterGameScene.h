@@ -10,8 +10,8 @@
 
 @protocol FighterGameSceneInterfaceDelegate <NSObject>
 
--(void)gameOver:(int)finalScore;
--(void)updateScore:(int)newScore;
+-(void)gameOver:(NSUInteger)finalScore;
+-(void)updateScore:(NSUInteger)newScore;
 -(void)updateHealth:(double)newHealth;
 
 @end
